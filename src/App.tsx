@@ -7,7 +7,7 @@ function App() {
         <p>Main content</p>
       </main>
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
