@@ -1,18 +1,21 @@
 import { useTheme } from '../model/useTheme';
+import { THEME } from '../model/constants';
 import styles from './ThemeSwitcher.module.css';
 
 export function ThemeSwitcher() {
   const { theme, toggleTheme } = useTheme();
 
+  const targetTheme = theme === THEME.LIGHT ? THEME.DARK : THEME.LIGHT;
+
   return (
     <button
       className={styles.themeToggle}
       onClick={toggleTheme}
-      aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-      title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+      aria-label={`Switch to ${targetTheme} mode`}
+      title={`Switch to ${targetTheme} mode`}
     >
       <span className={styles.icon} aria-hidden="true">
-        {theme === 'light' ? '☾' : '☀︎'}
+        {theme === THEME.LIGHT ? '☾' : '☀︎'}
       </span>
     </button>
   );

@@ -1,16 +1,17 @@
 import { useEffect, useState, type ReactNode } from 'react';
 import { ThemeContext, type Theme } from './model/ThemeContext';
+import { THEME, THEME_STORAGE_KEY } from './model/constants';
 
 const getInitialTheme = (): Theme => {
-  const savedTheme = localStorage.getItem('theme') as Theme | null;
+  const savedTheme = localStorage.getItem(THEME_STORAGE_KEY) as Theme | null;
 
   if (savedTheme) {
     return savedTheme;
   }
 
   return window.matchMedia('(prefers-color-scheme: dark)').matches
-    ? 'dark'
-    : 'light';
+    ? THEME.DARK
+    : THEME.LIGHT;
 };
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
@@ -18,11 +19,11 @@ export const ThemeProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     document.documentElement.dataset.theme = theme;
-    localStorage.setItem('theme', theme);
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme]);
 
   const toggleTheme = () =>
-    setTheme((prev) => (prev === 'light' ? 'dark' : 'light'));
+    setTheme((prev) => (prev === THEME.LIGHT ? THEME.DARK : THEME.LIGHT));
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>

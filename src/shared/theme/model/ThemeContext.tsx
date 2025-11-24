@@ -1,6 +1,7 @@
 import { createContext } from 'react';
+import { THEME } from './constants';
 
-export type Theme = 'light' | 'dark';
+export type Theme = typeof THEME.LIGHT | typeof THEME.DARK;
 
 export interface ThemeContextType {
   theme: Theme;
