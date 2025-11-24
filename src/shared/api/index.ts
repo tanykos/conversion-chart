@@ -1,0 +1,1 @@
+export { fetchAnalyticsDataApi } from './analytics';

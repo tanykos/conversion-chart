@@ -2,7 +2,7 @@ import { useTheme } from '../model/useTheme';
 import { THEME } from '../model/constants';
 import styles from './ThemeSwitcher.module.css';
 
-export function ThemeSwitcher() {
+export const ThemeSwitcher = () => {
   const { theme, toggleTheme } = useTheme();
 
   const targetTheme = theme === THEME.LIGHT ? THEME.DARK : THEME.LIGHT;
@@ -19,4 +19,4 @@ export function ThemeSwitcher() {
       </span>
     </button>
   );
-}
+};
