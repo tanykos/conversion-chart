@@ -17,8 +17,6 @@ export const Analytics = () => {
   if (isLoading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
-  console.log('Analytics data:', chartData);
-
   return (
     <>
       <AnalyticsControls

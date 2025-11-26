@@ -10,6 +10,7 @@ import type { DailyMetricChart } from '../model';
 import type { VariationChart } from '../model/types';
 import { formatDateLabel } from '../model/utils/formatDateLabel';
 import { CustomTooltip } from './CustomTooltip';
+import styles from './AnalyticsChart.module.css';
 
 interface AnalyticsChartProps {
   data: DailyMetricChart[];
@@ -21,13 +22,9 @@ export const AnalyticsChart = ({
   selectedVariations,
 }: AnalyticsChartProps) => {
   return (
-    <div style={{ width: '100%', height: 'auto' }}>
+    <div className={styles.container}>
       <LineChart
-        style={{
-          width: '100%',
-          maxWidth: '1300px',
-          aspectRatio: 1.618,
-        }}
+        className={styles.chart}
         responsive
         data={data}
         margin={{

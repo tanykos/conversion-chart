@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  height: calc(100vh - 200px);
+  min-height: 400px;
+  padding: var(--space-4) 0;
+}
+
+.chart {
+  width: 100%;
+  height: 100%;
+  max-width: 1300px;
+}
