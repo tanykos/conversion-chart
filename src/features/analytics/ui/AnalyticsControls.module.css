@@ -1,0 +1,116 @@
+.controls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  margin-bottom: var(--space-4);
+}
+
+.selectWrapper {
+  position: relative;
+}
+
+.select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  appearance: none;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: var(--fs-md);
+  font-family: var(--font-base);
+  cursor: pointer;
+  min-width: 200px;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.select:hover {
+  border-color: var(--color-gray);
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--color-blue);
+  box-shadow: 0 0 0 3px rgba(56, 56, 231, 0.1);
+}
+
+.arrow {
+  color: var(--color-gray);
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+
+.arrowOpen {
+  transform: rotate(180deg);
+}
+
+.dropdown {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  right: 0;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow);
+  padding: var(--space-2);
+  z-index: 100;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: background-color 0.15s ease;
+  user-select: none;
+}
+
+.dropdownItem:hover {
+  background-color: var(--color-bg);
+}
+
+.checkbox {
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.checkboxLabel {
+  font-size: var(--fs-sm);
+  color: var(--color-text);
+}
+
+.colorIndicator {
+  width: 12px;
+  height: 12px;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--space-2) 0;
+}
+
+.periodItem {
+  width: 100%;
+  border: none;
+  background: none;
+  text-align: left;
+  font-family: var(--font-base);
+}
+
+[data-theme='dark'] .select:focus {
+  box-shadow: 0 0 0 3px rgba(56, 56, 231, 0.2);
+}

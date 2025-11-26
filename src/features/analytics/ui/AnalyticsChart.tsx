@@ -9,6 +9,7 @@ import {
 import type { DailyMetricChart } from '../model';
 import type { VariationChart } from '../model/types';
 import { formatDateLabel } from '../model/utils/formatDateLabel';
+import { CustomTooltip } from './CustomTooltip';
 
 interface AnalyticsChartProps {
   data: DailyMetricChart[];
@@ -39,7 +40,7 @@ export const AnalyticsChart = ({
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="date" tickFormatter={formatDateLabel} />
         <YAxis width="auto" tickFormatter={(value: number) => `${value}%`} />
-        <Tooltip />
+        <Tooltip content={<CustomTooltip />} />
         {selectedVariations.map((variation) => (
           <Line
             key={variation.id}

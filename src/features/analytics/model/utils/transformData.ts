@@ -31,46 +31,113 @@ export const transformData = (
 ): DailyMetricChart[] => {
   const normalizedVariations = normalizeVariations(data.variations);
 
-  const grouped: Record<string, DailyMetricChart> = {};
+  if (period === PERIODS.DAY) {
+    return data.data.map((dailyMetricsApi) => {
+      const point: DailyMetricChart = {
+        date: dailyMetricsApi.date,
+      };
+
+      normalizedVariations.forEach((variation) => {
+        const variationId = String(variation.id);
+        const selected = selectedVariations.find((v) => v.id === variationId);
+        if (!selected) return;
+
+        const visits = dailyMetricsApi.visits[variationId];
+        const conversions = dailyMetricsApi.conversions[variationId];
+
+        if (visits !== undefined && conversions !== undefined) {
+          point[selected.label] = calculateConversionRate(conversions, visits);
+        }
+      });
+
+      return point;
+    });
+  }
+
+  const grouped: Record<
+    string,
+    {
+      dateRange: string;
+      visits: Record<string, number>;
+      conversions: Record<string, number>;
+    }
+  > = {};
 
   data.data.forEach((dailyMetricsApi) => {
-    const dateKey =
-      period === PERIODS.WEEK
-        ? getWeekKey(dailyMetricsApi.date)
-        : dailyMetricsApi.date;
+    const weekKey = getWeekKey(dailyMetricsApi.date);
+    const dateRange = getWeekDateRange(dailyMetricsApi.date);
 
-    if (!grouped[dateKey]) {
-      grouped[dateKey] = { date: dateKey };
+    if (!grouped[weekKey]) {
+      grouped[weekKey] = {
+        dateRange,
+        visits: {},
+        conversions: {},
+      };
     }
 
     normalizedVariations.forEach((variation) => {
       const variationId = String(variation.id);
+      const visits = dailyMetricsApi.visits[variationId] || 0;
+      const conversions = dailyMetricsApi.conversions[variationId] || 0;
 
-      const selected = selectedVariations.find(v => v.id === variationId);
-      if (!selected) return;
-
-      const visits = dailyMetricsApi.visits[variationId];
-      const conversions = dailyMetricsApi.conversions[variationId];
-
-      if (visits !== undefined && conversions !== undefined) {
-        grouped[dateKey][selected.label] =
-          calculateConversionRate(conversions, visits);
-      }
+      grouped[weekKey].visits[variationId] =
+        (grouped[weekKey].visits[variationId] || 0) + visits;
+      grouped[weekKey].conversions[variationId] =
+        (grouped[weekKey].conversions[variationId] || 0) + conversions;
     });
   });
 
-  return Object.values(grouped);
+  return Object.entries(grouped)
+    .sort(([keyA], [keyB]) => keyA.localeCompare(keyB))
+    .map(([, weekData]) => {
+      const point: DailyMetricChart = {
+        date: weekData.dateRange,
+      };
+
+      normalizedVariations.forEach((variation) => {
+        const variationId = String(variation.id);
+        const selected = selectedVariations.find((v) => v.id === variationId);
+        if (!selected) return;
+
+        const visits = weekData.visits[variationId] || 0;
+        const conversions = weekData.conversions[variationId] || 0;
+
+        point[selected.label] = calculateConversionRate(conversions, visits);
+      });
+
+      return point;
+    });
 };
 
 function getWeekKey(date: string): string {
   const d = new Date(date);
-  const year = d.getFullYear();
-  const week = Math.ceil(
-    ((+d - +new Date(year, 0, 1)) / 86400000 +
-      new Date(year, 0, 1).getDay() +
-      1) /
-      7
-  );
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
 
-  return `${year}-W${week}`;
+  const monday = new Date(d.getFullYear(), d.getMonth(), diff);
+  const year = monday.getFullYear();
+  const month = String(monday.getMonth() + 1).padStart(2, '0');
+  const dayStr = String(monday.getDate()).padStart(2, '0');
+
+  return `${year}-${month}-${dayStr}`;
+}
+
+function getWeekDateRange(date: string): string {
+  const d = new Date(date);
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+
+  const monday = new Date(d);
+  monday.setDate(diff);
+
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+
+  const formatDate = (date: Date) => {
+    const month = date.toLocaleString('en-US', { month: 'short' });
+    const day = date.getDate();
+    return `${month} ${day}`;
+  };
+
+  return `${formatDate(monday)}-${formatDate(sunday)}`;
 }

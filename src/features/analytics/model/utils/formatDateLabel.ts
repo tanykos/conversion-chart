@@ -1,8 +1,11 @@
 export const formatDateLabel = (date: string) => {
-  const d = new Date(date);
+  if (date.match(/[A-Za-z]+\s+\d+-[A-Za-z]+\s+\d+/)) {
+    return date.split('-')[0].trim();
+  }
 
-  return d.toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'short',
-  });
+  const d = new Date(date);
+  const day = d.getDate();
+  const month = d.toLocaleDateString('en-US', { month: 'short' });
+
+  return `${month} ${day}`;
 };
