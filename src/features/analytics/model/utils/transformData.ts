@@ -32,26 +32,34 @@ export const transformData = (
   const normalizedVariations = normalizeVariations(data.variations);
 
   if (period === PERIODS.DAY) {
-    return data.data.map((dailyMetricsApi) => {
-      const point: DailyMetricChart = {
-        date: dailyMetricsApi.date,
-      };
+    return data.data
+      .map((dailyMetricsApi) => {
+        const point: DailyMetricChart = {
+          date: dailyMetricsApi.date,
+        };
 
-      normalizedVariations.forEach((variation) => {
-        const variationId = String(variation.id);
-        const selected = selectedVariations.find((v) => v.id === variationId);
-        if (!selected) return;
+        let hasData = false;
 
-        const visits = dailyMetricsApi.visits[variationId];
-        const conversions = dailyMetricsApi.conversions[variationId];
+        normalizedVariations.forEach((variation) => {
+          const variationId = String(variation.id);
+          const selected = selectedVariations.find((v) => v.id === variationId);
+          if (!selected) return;
 
-        if (visits !== undefined && conversions !== undefined) {
-          point[selected.label] = calculateConversionRate(conversions, visits);
-        }
-      });
+          const visits = dailyMetricsApi.visits[variationId];
+          const conversions = dailyMetricsApi.conversions[variationId];
 
-      return point;
-    });
+          if (visits !== undefined && conversions !== undefined) {
+            point[selected.label] = calculateConversionRate(
+              conversions,
+              visits
+            );
+            hasData = true;
+          }
+        });
+
+        return hasData ? point : null;
+      })
+      .filter((point): point is DailyMetricChart => point !== null);
   }
 
   const grouped: Record<
@@ -94,6 +102,8 @@ export const transformData = (
         date: weekData.dateRange,
       };
 
+      let hasData = false;
+
       normalizedVariations.forEach((variation) => {
         const variationId = String(variation.id);
         const selected = selectedVariations.find((v) => v.id === variationId);
@@ -102,11 +112,15 @@ export const transformData = (
         const visits = weekData.visits[variationId] || 0;
         const conversions = weekData.conversions[variationId] || 0;
 
-        point[selected.label] = calculateConversionRate(conversions, visits);
+        if (visits > 0 || conversions > 0) {
+          point[selected.label] = calculateConversionRate(conversions, visits);
+          hasData = true;
+        }
       });
 
-      return point;
-    });
+      return hasData ? point : null;
+    })
+    .filter((point): point is DailyMetricChart => point !== null);
 };
 
 function getWeekKey(date: string): string {
