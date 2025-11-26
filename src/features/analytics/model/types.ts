@@ -1,3 +1,5 @@
+export type Period = 'day' | 'week';
+
 export interface Variation {
   id?: number;
   name: string;
@@ -22,4 +24,10 @@ export interface AnalyticsDataApi {
 export interface DailyMetricChart {
   date: string;
   [variationName: string]: string | number;
+}
+
+export interface VariationChart {
+  id: string;
+  label: string;
+  color: string;
 }

@@ -1,2 +1,3 @@
 export type { AnalyticsDataApi, DailyMetricChart } from './types';
-export { transformData } from './transformData';
+export { normalizeVariations, transformData } from './utils/transformData';
+
